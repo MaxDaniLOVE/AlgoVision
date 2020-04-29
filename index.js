@@ -1,9 +1,26 @@
-const container = document.querySelector('.container')
+const container = document.querySelector('.container');
+const input = document.getElementById('array-input');
+const button = document.getElementById('animate');
 
-const createDivs = (array) => {
+button.addEventListener('click', () => {
+  let array = input.value.split(',');
+  array = array.map(e => +e.trim())
+  aniamteBubbleSort(array)
+})
+
+const createDivs = ({ array, greater, lesser }) => {
   array.forEach(e => {
     const newDiv = document.createElement('div');
-    newDiv.setAttribute('class', 'element');
+    if (e === lesser) {
+      newDiv.setAttribute('class', 'element-greater');
+    } 
+    if (e === greater) {
+      newDiv.setAttribute('class', 'element-lesser');
+    }
+    if (e !== lesser && e !== greater) {
+      newDiv.setAttribute('class', 'element');
+
+    }
     newDiv.innerHTML = e;
     newDiv.style.height = `${30 * e}px`;
     container.appendChild(newDiv);
@@ -28,32 +45,36 @@ const quickSort = (arr) => {
   return [...quickSort(lesser), pivot, ...quickSort(greater)]; 
 }
 
-const helpingArray = []
-const bubbleSort = (arr) => {
-  const len = arr.length;
-  for (let i = 0; i < len; i++) {
-    for (let j = 0; j < len; j++) {
-      if (arr[j] > arr[j + 1]) {
-        let tmp = arr[j];
-        arr[j] = arr[j + 1];
-        arr[j + 1] = tmp;
+const aniamteBubbleSort = (animatedArray) => {
+
+  const helpingArray = [];
+
+  const bubbleSort = (arr) => {
+    const len = arr.length;
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len; j++) {
+        if (arr[j] > arr[j + 1]) {
+          let tmp = arr[j];
+          arr[j] = arr[j + 1];
+          arr[j + 1] = tmp;
+          helpingArray.push({ array: [...arr], greater: arr[j], lesser:  arr[j + 1] })
+          continue;
+        }
+        helpingArray.push({ array: [...arr], greater: arr[j + 1], lesser: arr[j] })
       }
-      helpingArray.push([...arr])
     }
-   
-  }
-  return arr;
-};
+    return arr;
+  };
+  
+  bubbleSort(animatedArray);
+  
+  let offset = 0;
 
-bubbleSort(array);
-
-let offset = 0;
-
-helpingArray.map(e => {
-  setTimeout(() => {
-    clearCanvas();
-    createDivs(e);
-    console.log(e);
-  }, 500 + offset);
-  offset += 500;
-})
+  helpingArray.map(e => {
+    setTimeout(() => {
+      clearCanvas();
+      createDivs(e);
+    }, 500 + offset);
+    offset += 500;
+  })
+}
